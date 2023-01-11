@@ -130,11 +130,17 @@ const Product = ({
     })
   }
 
+  const deleteFromImagesArray = (i:number) => {
+    setImages((currItems) => {
+       return currItems.filter((item, index) => index !== i);
+    })
+  }
+
   const supabase = useSupabaseClient<Database>();
 
   const uploadFiles = async (e: FormEvent<HTMLInputElement>) => {
     e.preventDefault();
-
+    setImages([])
 
     let files: FileList | null = e.currentTarget.files;
 
@@ -319,8 +325,6 @@ const Product = ({
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
               </div>
-
-
             </div>
 
             <div className="grid grid-cols-6 gap-6 my-8">
@@ -564,9 +568,10 @@ const Product = ({
                       brand: e.target.value,
                     })
                   }
+                  value={productData.brand}
                   className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                 >
-                  <option>
+                  <option value={productData.brand}>
                     {productData.brand ? brandId?.name : "Choose Brand"}
                   </option>
                   {brands.map((item) => (
@@ -593,6 +598,7 @@ const Product = ({
                       supplier: e.target.value,
                     })
                   }
+                  value={productData.supplier}
                   className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                 >
                   <option>
@@ -627,6 +633,7 @@ const Product = ({
                       category: e.target.value,
                     })
                   }
+                  value={productData.category}
                   className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                 >
                   <option>
@@ -658,9 +665,10 @@ const Product = ({
                       sub_category: e.target.value,
                     })
                   }
+                  value={productData.sub_category}
                   className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                 >
-                  <option value={productData.sub_category}>
+                  <option value="">
                     {productData.sub_category
                       ? subCategoriesId?.name
                       : "Choose Supplier"}
@@ -675,9 +683,23 @@ const Product = ({
             </div>
 
             <div className="mt-6">
-              <div className="mb-5 grid grid-cols-4 gap-3">{productData.images?.map((image, i) =>  (
-               <Image className="w-full aspect-1 rounded-lg p-2 border border-slate-200" key={i} src={image.url} width={image.width} height={image.height} alt={product.name} />
-              ))}</div>
+              <div className="mb-5 grid grid-cols-4 gap-3">
+                {images?.map((image, i) => (
+                  <div key={i} className="relative isolate">
+                    <Image
+                      className="w-full aspect-1 object-cover rounded-lg p-2 border border-slate-200"
+                      src={image.url}
+                      width={image.width}
+                      height={image.height}
+                      alt={product.name}
+                    />
+                    <RiDeleteBin3Line
+                      className="text-red-500 text-lg absolute top-3 right-3 z-30 cursor-pointer"
+                      onClick={() => deleteFromImagesArray(i)}
+                    />
+                  </div>
+                ))}
+              </div>
               <label className="block text-sm font-medium text-gray-700">
                 Upload Product Images
               </label>
