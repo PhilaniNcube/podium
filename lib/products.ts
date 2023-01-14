@@ -17,8 +17,8 @@ export const getAllProducts = async() => {
 export const getProducts = async(page = '1', limit = '20') => {
  let p = +page
 
-   let range = parseInt(limit)
-  let start = (p - 1) * range
+   let range = 20
+  let start = (p-1) * range
 
   const {data:products, error} = await supabase.from('products').select('*, brand(*), category(*), sub_category(*), supplier(*)').eq('published', true).range(start, range)
 
@@ -29,13 +29,15 @@ export const getProducts = async(page = '1', limit = '20') => {
 
 }
 
-export const getAdminProducts = async(page = '1', limit = '20') => {
+export const getAdminProducts = async(page = '1') => {
  let p = +page
 
-   let range = parseInt(limit)
-  let start = (p - 1) * range
+   let range = 20
+  let start = (p-1) * range
 
-  const {data:products, error} = await supabase.from('products').select('*, brand(*), category(*), sub_category(*), supplier(*)').order('name', {ascending: false}).range(start, range)
+  console.log({p, range, start})
+
+  const {data:products, error} = await supabase.from('products').select('*, brand(*), category(*), sub_category(*), supplier(*)').order('name', {ascending: false}).range(start, range).limit(range)
 
   if (error) {
     throw new Error(`There was an error: ${error.details} - ${error.message} - ${error.hint}`)
@@ -49,8 +51,8 @@ export const getAdminProducts = async(page = '1', limit = '20') => {
 export const getProductsByCategory = async(page = '1', limit = '20', category:string) => {
  let p = +page
 
-   let range = parseInt(limit)
-  let start = (p - 1) * range
+   let range = 20
+  let start = (p-1) * range
 
   const {data:products, error} = await supabase.from('products').select('*, brand(*), category(*), sub_category(*), supplier(*)').match({'published': true, 'category': category}).range(start, range)
 
@@ -66,8 +68,9 @@ export const getProductsByCategory = async(page = '1', limit = '20', category:st
 export const getProductsBySubCategory = async(page = '1', limit = '20', category:string) => {
  let p = +page
 
-   let range = parseInt(limit)
-  let start = (p - 1) * range
+   let range = 20
+  let start = (p-1) * range
+
 
   const {data:products, error} = await supabase.from('products').select('*, brand(*), category(*), sub_category(*), supplier(*)').match({'published': true, 'sub_category': category}).range(start, range)
 
@@ -83,8 +86,8 @@ export const getProductsBySubCategory = async(page = '1', limit = '20', category
 export const getProductsByBrand = async(page = '1', limit = '20', brand:string) => {
  let p = +page
 
-   let range = parseInt(limit)
-  let start = (p - 1) * range
+   let range = 20
+  let start = (p-1) * range
 
   const {data:products, error} = await supabase.from('products').select('*, brand(*), category(*), sub_category(*), supplier(*)').match({'published': true, 'brand': brand}).range(start, range)
 
@@ -100,8 +103,8 @@ export const getProductsByBrand = async(page = '1', limit = '20', brand:string) 
 export const getProductsBySupplier = async(page = '1', limit = '20', supplier:string) => {
  let p = +page
 
-   let range = parseInt(limit)
-  let start = (p - 1) * range
+   let range = 20
+  let start = (p-1) * range
 
   const {data:products, error} = await supabase.from('products').select('*, brand(*), category(*), sub_category(*), supplier(*)').match({ 'supplier': supplier}).range(start, range)
 
@@ -140,8 +143,8 @@ export const getAdminProduct = async(slug:string) => {
 export const searchProduct = async(page = '1', limit = '20', search:string) => {
  let p = +page
 
-   let range = parseInt(limit)
-  let start = (p - 1) * range
+   let range = 20
+  let start = (p-1) * range
 
     const {data:products, error} = await supabase.from('products').select('*, brand(*), category(*), sub_category(*), supplier(*)').match({'published': true}).textSearch('name',search, {config:'english', type: 'websearch'}).range(start, range)
 

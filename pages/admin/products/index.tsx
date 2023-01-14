@@ -10,13 +10,42 @@ import { getAdminProducts, getProducts } from "../../../lib/products";
 import { RiDeleteBin2Line, RiPencilLine } from "react-icons/ri";
 import { v4 as uuidv4 } from "uuid";
 import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 type ComponentProps = {
   products: ProductType[]
+  page: string
 }
 
 
-const Products = ({products}:ComponentProps) => {
+const Products = ({products, page}:ComponentProps) => {
+
+  const {data, isLoading, isSuccess} = useQuery({
+    queryKey: ['products', page],
+    queryFn: () => getAdminProducts(page),
+    initialData:products,
+  })
+
+  const [productsPage, setProductsPage] = useState(+page)
+
+  const nextPage = () => {
+    if(data?.length < 21) {
+      setProductsPage(productsPage);
+    } else {
+      setProductsPage(productsPage + 1);
+      router.push(`/admin/products?page=${productsPage}`);
+    }
+  }
+
+  const prevPage = () => {
+    if(productsPage === 1) {
+      setProductsPage(productsPage);
+    } else {
+      setProductsPage(productsPage - 1);
+          router.push(`/admin/products?page=${productsPage}`);
+    }
+  }
 
   console.log({products})
 
@@ -122,6 +151,23 @@ const Products = ({products}:ComponentProps) => {
             </article>
           ))}
         </div>
+        <div className="mt-3 w-full flex justify-between">
+          <button
+            disabled={+page < 2}
+            onClick={() => router.push(`/admin/products?page=${+page - 1}`)}
+            className="bg-slate-700 text-white font-medium px-8 py-1 rounded"
+          >
+            Prev
+          </button>
+          {productsPage}
+          <button
+            disabled={data.length < 20}
+            onClick={() => router.push(`/admin/products?page=${+page + 1}`)}
+            className="bg-slate-700 text-white font-medium px-8 py-1 rounded"
+          >
+            Next
+          </button>
+        </div>
       </section>
     </Dashboard>
   );
@@ -131,11 +177,14 @@ export default Products;
 export async function getServerSideProps({query:{page = '1'}}) {
 
 
+
+
   const products = await getAdminProducts(page)
 
   return {
     props: {
-      products
+      products,
+      page
     }
   }
 

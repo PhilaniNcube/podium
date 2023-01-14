@@ -29,7 +29,7 @@ const {data:category, error} = await supabase.from('categories').select('*').eq(
 
 export const getSubCategories = async() => {
 
-const {data:categories, error} = await supabase.from('sub_category').select('*, parent(*)').order('parent', {ascending: true})
+const {data:categories, error} = await supabase.from('sub_category').select('*, parent(*)').order('name', {ascending: true})
 
   if (error) {
     throw new Error(`There was an error: ${error.details} - ${error.message} - ${error.hint}`)
